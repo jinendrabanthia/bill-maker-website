@@ -138,7 +138,7 @@ export default function OrderForm({ initialData = {}, profile }: { initialData?:
       else setIsSaving(true)
 
       // Strip non-serializable objects (like File) before passing to Server Action
-      const itemsForServer = items.map(({ file, base64Image, previewUrl, ...rest }) => rest)
+      const itemsForServer = items.map(({ file: _file, base64Image: _base, previewUrl: _prev, ...rest }) => rest)
       
       // 1. First save order without item images to get Order ID
       const saveRes = await saveOrder(order, itemsForServer)
@@ -151,7 +151,7 @@ export default function OrderForm({ initialData = {}, profile }: { initialData?:
       if (hasNewFiles) {
         finalItems = await uploadImages(saveRes.orderId)
         // 3. Save order items again with image URLs
-        const finalItemsForServer = finalItems.map(({ file, base64Image, previewUrl, ...rest }) => rest)
+        const finalItemsForServer = finalItems.map(({ file: _file, base64Image: _base, previewUrl: _prev, ...rest }) => rest)
         await saveOrder({ ...order, id: saveRes.orderId }, finalItemsForServer)
       }
 
@@ -159,7 +159,7 @@ export default function OrderForm({ initialData = {}, profile }: { initialData?:
 
       if (generatePdfAfter) {
         // Need to ensure all items have base64 format for jsPDF
-        for (let item of finalItems) {
+        for (const item of finalItems) {
           if (!item.base64Image && item.product_image_url) {
             try {
               const response = await fetch(item.product_image_url)
@@ -248,6 +248,7 @@ export default function OrderForm({ initialData = {}, profile }: { initialData?:
                   <div className="flex items-center gap-2">
                     {(item.previewUrl || item.product_image_url) ? (
                       <div className="w-12 h-12 border rounded overflow-hidden relative group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={item.previewUrl || item.product_image_url} alt="Preview" className="w-full h-full object-cover" />
                       </div>
                     ) : (
