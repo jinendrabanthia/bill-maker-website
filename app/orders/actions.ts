@@ -39,7 +39,7 @@ export async function saveOrder(orderData: any, itemsData: any[]) {
 
   // Insert items
   const itemsToInsert = itemsData.map((item, index) => {
-    const { id, ...rest } = item;
+    const { id: _id, ...rest } = item;
     return {
       ...rest,
       order_id: order.id,
