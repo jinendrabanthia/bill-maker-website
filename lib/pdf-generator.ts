@@ -179,8 +179,8 @@ export const generatePDF = async (orderData: any, items: any[], profile: any) =>
   const pdfBlob = doc.output('blob')
   
   try {
-    if (window.showSaveFilePicker) {
-      const handle = await window.showSaveFilePicker({
+    if ('showSaveFilePicker' in window) {
+      const handle = await (window as any).showSaveFilePicker({
         suggestedName: filename,
         types: [{
           description: 'PDF Document',
